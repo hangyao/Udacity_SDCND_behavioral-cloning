@@ -6,11 +6,12 @@ In this project, a Deep Neural Network will be trained and validated to clone a 
 
 ## Install
 
-Download the simulator based on the Unity engine that uses real game physics to create a close approximation to real driving. [macOS](https://d17h27t6h515a5.cloudfront.net/topher/2016/November/5831f290_simulator-macos/simulator-macos.zip)
+Download the simulator based on the Unity engine that uses real game physics to create a close approximation to real driving.
+- Download it here: [macOS](https://d17h27t6h515a5.cloudfront.net/topher/2016/November/5831f290_simulator-macos/simulator-macos.zip)
 
-Beta Simulators: [macOS](https://d17h27t6h515a5.cloudfront.net/topher/2017/January/587525b2_udacity-sdc-udacity-self-driving-car-simulator-dominique-default-mac-desktop-universal-5/udacity-sdc-udacity-self-driving-car-simulator-dominique-default-mac-desktop-universal-5.zip)
+- Beta Simulators: [macOS](https://d17h27t6h515a5.cloudfront.net/topher/2017/January/587525b2_udacity-sdc-udacity-self-driving-car-simulator-dominique-default-mac-desktop-universal-5/udacity-sdc-udacity-self-driving-car-simulator-dominique-default-mac-desktop-universal-5.zip)
 
-This project requires **Python 3.5** with the following libraries installed:
+This project requires **Python 3.5** with the following libraries/dependencies installed:
 
 - [Numpy](http://www.numpy.org/)
 - [Pandas](http://pandas.pydata.org/)
@@ -48,7 +49,16 @@ Once the model is up and running in `drive.py`, you should see the car move arou
 
 # Data Augmentation
 
-I adapted the following steps to randomly select and transform images:
+The following steps are implemented to randomly select and transform images. Here is the image augmentation pipeline:
+
+| Raw image |
+| :-------: |
+| Flip |
+| Shear |
+| Rotate |
+| Adjust Gamma |
+| Crop & Resize |
+| RGB to YUV |
 
 1. Randomly selected images:
 
@@ -59,46 +69,94 @@ I adapted the following steps to randomly select and transform images:
   ![Raw image](documents/raw.png)
 
 2. Random Flip:
+
   Images are randomly flipped.
 
   Here is a sample of flipped image:
-![Raw image](documents/flip.png)
+
+  ![Raw image](documents/flip.png)
 
 3. Random Shear:
+
   Images are randomly sheared.
 
   Here is a sample of flipped image:
-![Raw image](documents/shear.png)
+
+  ![Raw image](documents/shear.png)
 
 4. Random Rotation:
+
   Images are randomly rotated.
 
   Here is a sample of rotated image:
-![Raw image](documents/rotate.png)
+
+  ![Raw image](documents/rotate.png)
 
 5. Random Gamma Adjustment:
+
   Images are randomly adjusted by gamma value.
 
   Here is a sample of gamma adjusted image:
-![Raw image](documents/gamma.png)
+
+  ![Raw image](documents/gamma.png)
 
 6. Crop and Resize:
+
   Images are cropped and resized.
 
   Here is a sample of cropped and resized image:
-![Raw image](documents/crop_resize.png)
+
+  ![Raw image](documents/crop_resize.png)
 
 7. Convert from RGB to YUV:
+
   Images are converted from RGB channel to YUV channel [1].
-![Raw image](documents/rgb2yuv.png)
+
+  ![Raw image](documents/rgb2yuv.png)
 
 # Architecture
 
-The architecture of model is strictly followed the model in this paper [1]. The only difference is the input size has been reduced to 80 x 80.
+The architecture of model is strictly followed the model in this paper [1]. The only difference is the input size has been reduced from 66x200 to 80x80.
 
 Here is the architecture diagram:
 
 ![CNN Architecture](documents/CNN_architecture.png)
+
+And here is the model summary:
+
+```python
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+lambda_1 (Lambda)                (None, 80, 80, 3)     0           lambda_input_1[0][0]             
+____________________________________________________________________________________________________
+convolution2d_1 (Convolution2D)  (None, 38, 38, 24)    1824        lambda_1[0][0]                   
+____________________________________________________________________________________________________
+convolution2d_2 (Convolution2D)  (None, 17, 17, 36)    21636       convolution2d_1[0][0]            
+____________________________________________________________________________________________________
+convolution2d_3 (Convolution2D)  (None, 7, 7, 48)      43248       convolution2d_2[0][0]            
+____________________________________________________________________________________________________
+convolution2d_4 (Convolution2D)  (None, 5, 5, 64)      27712       convolution2d_3[0][0]            
+____________________________________________________________________________________________________
+convolution2d_5 (Convolution2D)  (None, 3, 3, 64)      36928       convolution2d_4[0][0]            
+____________________________________________________________________________________________________
+flatten_1 (Flatten)              (None, 576)           0           convolution2d_5[0][0]            
+____________________________________________________________________________________________________
+dense_1 (Dense)                  (None, 1164)          671628      flatten_1[0][0]                  
+____________________________________________________________________________________________________
+dense_2 (Dense)                  (None, 100)           116500      dense_1[0][0]                    
+____________________________________________________________________________________________________
+dense_3 (Dense)                  (None, 50)            5050        dense_2[0][0]                    
+____________________________________________________________________________________________________
+dense_4 (Dense)                  (None, 10)            510         dense_3[0][0]                    
+____________________________________________________________________________________________________
+dense_5 (Dense)                  (None, 1)             11          dense_4[0][0]                    
+====================================================================================================
+Total params: 925,047
+Trainable params: 925,047
+Non-trainable params: 0
+____________________________________________________________________________________________________
+```
 
 The Adam optimizer and MSE loss function are used for compilation.
 
