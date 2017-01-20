@@ -48,14 +48,53 @@ Once the model is up and running in `drive.py`, you should see the car move arou
 
 # Data Augmentation
 
-Random Flip
-Random Shear
-Random Rotate
-Random Gamma Adjustment
-Resize
-RGB2YUV
+I adapted the following steps to randomly select and transform images:
+
+1. Randomly selected images:
+  64 images are randomly selected for each batch. The images are also randomly select from center, left, or right cameras.
+
+  Here is a sample of raw image:
+![Raw image](documents/raw.png)
+
+2. Random Flip:
+  Images are randomly flipped.
+
+  Here is a sample of flipped image:
+![Raw image](documents/flip.png)
+
+3. Random Shear:
+  Images are randomly sheared.
+
+  Here is a sample of flipped image:
+![Raw image](documents/shear.png)
+
+4. Random Rotation:
+  Images are randomly rotated.
+
+  Here is a sample of rotated image:
+![Raw image](documents/rotate.png)
+
+5. Random Gamma Adjustment:
+  Images are randomly adjusted by gamma value.
+
+  Here is a sample of gamma adjusted image:
+![Raw image](documents/gamma.png)
+
+6. Crop and Resize:
+  Images are cropped and resized.
+
+  Here is a sample of cropped and resized image:
+![Raw image](documents/crop_resize.png)
+
+7. Convert from RGB to YUV:
+  Images are converted from RGB channel to YUV channel [1].
+![Raw image](documents/rgb2yuv.png)
 
 # Architecture
+
+The architecture of model is strictly followed the model in this paper [1]. The only difference is the input size has been reduced to 80 x 80.
+
+Here is the architecture diagram:
 
 ![CNN Architecture](documents/CNN_architecture.png)
 
@@ -63,7 +102,7 @@ The Adam optimizer and MSE loss function are used for compilation.
 
 A Fit Generator is used to fit the model on image data generated batch-by-batch. This will increase efficiency of model training.
 
-## Ref
+## Reference
 
 1. [End to End Learning for Self-Driving Cars](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf)
 
