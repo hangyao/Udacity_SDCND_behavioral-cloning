@@ -51,7 +51,7 @@ Once the model is up and running in `drive.py`, you should see the car move arou
 
 The following steps are implemented to randomly select and transform images. Here is the image augmentation pipeline:
 
-| Raw image |
+| Raw Image |
 | :-------: |
 | Flip |
 | Shear |
@@ -59,6 +59,7 @@ The following steps are implemented to randomly select and transform images. Her
 | Adjust Gamma |
 | Crop & Resize |
 | RGB to YUV |
+| Input Image to CNN |
 
 1. Randomly selected images:
 
@@ -78,7 +79,7 @@ The following steps are implemented to randomly select and transform images. Her
 
 3. Random Shear:
 
-  Images are randomly sheared.
+  Images are randomly sheared horizontally up to 50 pixels from the center point of the image.
 
   Here is a sample of flipped image:
 
@@ -86,7 +87,7 @@ The following steps are implemented to randomly select and transform images. Her
 
 4. Random Rotation:
 
-  Images are randomly rotated.
+  Images are randomly rotated up to 5 degrees around the center of the image.
 
   Here is a sample of rotated image:
 
@@ -94,7 +95,7 @@ The following steps are implemented to randomly select and transform images. Her
 
 5. Random Gamma Adjustment:
 
-  Images are randomly adjusted by gamma value.
+  Images are randomly adjusted by gamma value up to ± 0.7.
 
   Here is a sample of gamma adjusted image:
 
@@ -102,7 +103,7 @@ The following steps are implemented to randomly select and transform images. Her
 
 6. Crop and Resize:
 
-  Images are cropped and resized.
+  Images are cropped 56 pixels from top and 16 pixels from bottom, and then resized to 80x80 pixels.
 
   Here is a sample of cropped and resized image:
 
@@ -124,7 +125,7 @@ Here is the architecture diagram:
 
 And here is the model summary:
 
-```python
+```
 ____________________________________________________________________________________________________
 Layer (type)                     Output Shape          Param #     Connected to                     
 ====================================================================================================
