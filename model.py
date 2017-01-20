@@ -1,14 +1,14 @@
 import helper
 import json
 import os
-from keras.applications.xception import Xception
-from keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from keras.models import Model, model_from_json
+from keras.layers import Dense, GlobalAveragePooling2D, Lambda, Flatten
+from keras.layers.convolutional import Convolution2D
+from keras.models import Model, Sequential, model_from_json
 
 IMSIZE = 80 # Input image size
-SAMPLES_PER_EPOCH = 64#24576 # Number of samples per epoch
+SAMPLES_PER_EPOCH = 24576 # Number of samples per epoch
 NB_EPOCH = 1 # Number of epoch
-NB_VAL_SAMPLES = 64#2048 # Number of validation samples
+NB_VAL_SAMPLES = 2048 # Number of validation samples
 
 try:
     # If model file exists in the folder, load the model and weights from files
@@ -21,24 +21,20 @@ try:
 
 except:
     # If model file does not exist, construct a Xception model
-    print("Construct a new Xception model.")
-    base_model = Xception(input_shape=(IMSIZE, IMSIZE, 3),
-                          weights='imagenet',
-                          include_top=False)
-    x = base_model.output
-    # Add feature extraction layers for Xception model
-    x = GlobalAveragePooling2D()(x)
-    x = Dropout(0.5)(x)
-    x = Dense(256, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    x = Dense(32, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    x = Dense(8, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    predictions = Dense(1)(x)
-    model = Model(input=base_model.input, output=predictions)
-    for layer in base_model.layers:
-        layer.trainable = False
+    print("Construct a new model.")
+    model = Sequential()
+    model.add(Lambda(lambda x: x / 127.5 - 1.0, input_shape=(80, 80, 3)))
+    model.add(Convolution2D(24, 5, 5, activation='relu', border_mode='valid', subsample=(2, 2)))
+    model.add(Convolution2D(36, 5, 5, activation='relu', border_mode='valid', subsample=(2, 2)))
+    model.add(Convolution2D(48, 5, 5, activation='relu', border_mode='valid', subsample=(2, 2)))
+    model.add(Convolution2D(64, 3, 3, activation='relu', border_mode='valid', subsample=(1, 1)))
+    model.add(Convolution2D(64, 3, 3, activation='relu', border_mode='valid', subsample=(1, 1)))
+    model.add(Flatten())
+    model.add(Dense(1164, activation='relu'))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(1))
     model.summary()
     model.compile("adam", "mse")
 
@@ -51,9 +47,6 @@ model.fit_generator(train_gen,
                     validation_data=valid_gen,
                     nb_val_samples=NB_VAL_SAMPLES,
                     verbose=1)
-
-print(model.ouput)
-print(train_gen[1])
 
 # Ask if overwrite the existing model files
 if 'model.json' in os.listdir():

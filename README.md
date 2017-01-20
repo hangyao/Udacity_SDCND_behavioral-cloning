@@ -43,28 +43,29 @@ Once the model is up and running in `drive.py`, you should see the car move arou
 
 1. `IMG` folder -  this folder contains all the frames of your driving.
 2. `driving_log.csv` - each row in this sheet correlates your image with the steering angle, throttle, brake, and speed of your car. You'll mainly be using the steering angle.
-3. ` model.json` - model architecture.
+3. `model.json` - model architecture.
 4. `model.h5` - model weights.
+
+# Data Augmentation
+
+Random Flip
+Random Shear
+Random Rotate
+Random Gamma Adjustment
+Resize
+RGB2YUV
 
 # Architecture
 
-[Xception](https://arxiv.org/abs/1610.02357) is an improved but simple architecture based on the inception module as effective as ResNet and Inception V4. On ImageNet, Xception shows the highest accuracy with moderate number of parameters.
-
-Xception module:
-![Xception Module][Xception_module]
-[Xception_module]: https://culurciello.github.io/assets/nets/xception.jpg
-
-Xception architecture:
-![Xception Architecture][Xception_arch]
-[Xception_arch]: https://culurciello.github.io/assets/nets/xception-net.jpg
-
-Feature extraction layers are added after the base pre-trained model of Xception:
-1. A Global Average Pooling layer;
-2. 4 Fully-Connected layers, each one followed with a RELU Activation layer and a Dropout layer with a dropout rate of 0.5.
+![CNN Architecture](documents/CNN_architecture.png)
 
 The Adam optimizer and MSE loss function are used for compilation.
 
 A Fit Generator is used to fit the model on image data generated batch-by-batch. This will increase efficiency of model training.
+
+## Ref
+
+1. [End to End Learning for Self-Driving Cars](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf)
 
 ## License
 

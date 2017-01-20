@@ -8,7 +8,7 @@ import json
 CSV_FILE = 'driving_log.csv'
 TOP_CROP = 56
 BOT_CROP = 16
-STEERING_ADJ = 0.25
+STEERING_ADJ = 0.15
 IMSIZE = 80
 
 
@@ -71,7 +71,7 @@ def batch_generator(batch_size=64):
             im = Image.fromarray(im)
             im = crop_resize_img(im)
             im = np.asarray(im)
-            im = im / 255.0 - 0.5
+            im = cv2.cvtColor(im, cv2.COLOR_RGB2YUV)
             X_batch.append(im)
             y_batch.append(steer)
         yield (np.array(X_batch), np.array(y_batch))
@@ -107,7 +107,7 @@ def random_shear(image, steer, shear_dist=50):
     d = np.random.randint(-shear_dist, shear_dist+1)
     pt_1 = np.float32([[0, rows], [cols, rows], [cols/2, rows/2]])
     pt_2 = np.float32([[0, rows], [cols, rows], [cols/2+d, rows/2]])
-    dsteer = d / (rows/2) * 360 / (2. * np.pi * 25) / 6.
+    dsteer = np.arctan(d / (rows/2)) * np.pi / 180 * 15
     M = cv2.getAffineTransform(pt_1, pt_2)
     image = cv2.warpAffine(image, M, (cols,rows), borderMode=1)
     steer += dsteer
