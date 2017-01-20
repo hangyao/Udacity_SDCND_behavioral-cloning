@@ -163,6 +163,16 @@ The Adam optimizer and MSE loss function are used for compilation.
 
 A Fit Generator is used to fit the model on image data generated batch-by-batch. This will increase efficiency of model training.
 
+# Training and Results
+
+The training process involves keeping fine tune steering angle adjustments for each step of image augmentation in order to make the car steer smoothly on tracks.
+
+The result performs surprisingly good, and the car can run on both training and testing tracks. On the training track, the car steers a bit roughly, but on the testing track, it runs pretty smoothly.
+
+![Train track](documents/train_track.gif)
+
+![Test track](documents/test_track.gif)
+
 ## Reference
 
 1. [End to End Learning for Self-Driving Cars](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf)

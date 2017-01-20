@@ -7,7 +7,7 @@ from keras.models import Model, Sequential, model_from_json
 
 IMSIZE = 80 # Input image size
 SAMPLES_PER_EPOCH = 24576 # Number of samples per epoch
-NB_EPOCH = 1 # Number of epoch
+NB_EPOCH = 10 # Number of epoch
 NB_VAL_SAMPLES = 2048 # Number of validation samples
 
 try:
