@@ -51,10 +51,12 @@ Once the model is up and running in `drive.py`, you should see the car move arou
 I adapted the following steps to randomly select and transform images:
 
 1. Randomly selected images:
+
   64 images are randomly selected for each batch. The images are also randomly select from center, left, or right cameras.
 
   Here is a sample of raw image:
-![Raw image](documents/raw.png)
+
+  ![Raw image](documents/raw.png)
 
 2. Random Flip:
   Images are randomly flipped.
