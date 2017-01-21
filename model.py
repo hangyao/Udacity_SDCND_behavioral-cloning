@@ -1,13 +1,14 @@
 import helper
 import json
 import os
-from keras.layers import Dense, GlobalAveragePooling2D, Lambda, Flatten
+from keras.layers import Dense, GlobalAveragePooling2D, Lambda, Flatten, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.models import Model, Sequential, model_from_json
+from keras.callbacks import EarlyStopping
 
 IMSIZE = 80 # Input image size
 SAMPLES_PER_EPOCH = 24576 # Number of samples per epoch
-NB_EPOCH = 10 # Number of epoch
+NB_EPOCH = 50 # Number of epoch
 NB_VAL_SAMPLES = 2048 # Number of validation samples
 
 try:
@@ -30,7 +31,9 @@ except:
     model.add(Convolution2D(64, 3, 3, activation='relu', border_mode='valid', subsample=(1, 1)))
     model.add(Convolution2D(64, 3, 3, activation='relu', border_mode='valid', subsample=(1, 1)))
     model.add(Flatten())
+    model.add(Dropout(0.5))
     model.add(Dense(1164, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(100, activation='relu'))
     model.add(Dense(50, activation='relu'))
     model.add(Dense(10, activation='relu'))
@@ -41,11 +44,15 @@ except:
 # Use Fit Generator for training and validation data epoches
 train_gen = helper.batch_generator()
 valid_gen = helper.batch_generator()
+early_stopping = EarlyStopping(monitor='val_loss',
+                               min_delta=0,
+                               patience=3)
 model.fit_generator(train_gen,
                     samples_per_epoch=SAMPLES_PER_EPOCH,
                     nb_epoch=NB_EPOCH,
                     validation_data=valid_gen,
                     nb_val_samples=NB_VAL_SAMPLES,
+                    callbacks=[early_stopping],
                     verbose=1)
 
 # Ask if overwrite the existing model files

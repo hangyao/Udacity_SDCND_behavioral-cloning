@@ -117,13 +117,17 @@ The following steps are implemented to randomly select and transform images. Her
 
 # Architecture
 
-The architecture of model is strictly followed the model in this paper [1]. The only difference is the input size has been reduced from 66x200 to 80x80.
+The architecture of model is strictly followed the model in this paper [1]. The only differences are:
 
-Here is the architecture diagram:
+1. the input size has been reduced from 66x200 to 80x80. The input size of images has been reduced more than a half, and I think that won't affect the results of training.
+
+2. Two Dropout layers have been added between the Flatten layer, the first Fully-Connected layer, and the second Fully-Connected layer. In order to prevent overfitting and to yield a more generalized model which can adapt to new tracks, I added two Dropout layers there for regularization.
+
+Here is the architecture diagram from the paper [1]:
 
 ![CNN Architecture](documents/CNN_architecture.png)
 
-And here is the model summary:
+And here is the summary of model actually been implemented:
 
 ```
 ____________________________________________________________________________________________________
@@ -143,9 +147,13 @@ convolution2d_5 (Convolution2D)  (None, 3, 3, 64)      36928       convolution2d
 ____________________________________________________________________________________________________
 flatten_1 (Flatten)              (None, 576)           0           convolution2d_5[0][0]            
 ____________________________________________________________________________________________________
-dense_1 (Dense)                  (None, 1164)          671628      flatten_1[0][0]                  
+dropout_1 (Dropout)              (None, 576)           0           flatten_1[0][0]                  
 ____________________________________________________________________________________________________
-dense_2 (Dense)                  (None, 100)           116500      dense_1[0][0]                    
+dense_1 (Dense)                  (None, 1164)          671628      dropout_1[0][0]                  
+____________________________________________________________________________________________________
+dropout_2 (Dropout)              (None, 1164)          0           dense_1[0][0]                    
+____________________________________________________________________________________________________
+dense_2 (Dense)                  (None, 100)           116500      dropout_2[0][0]                  
 ____________________________________________________________________________________________________
 dense_3 (Dense)                  (None, 50)            5050        dense_2[0][0]                    
 ____________________________________________________________________________________________________
@@ -163,11 +171,22 @@ The Adam optimizer and MSE loss function are used for compilation.
 
 A Fit Generator is used to fit the model on image data generated batch-by-batch. This will increase efficiency of model training.
 
-# Training and Results
+# Training
 
-The training process involves keeping fine tune steering angle adjustments for each step of image augmentation in order to make the car steer smoothly on tracks.
+The training process involves the following steps:
 
-The result performs surprisingly good, and the car can run on both training and testing tracks. On the training track, the car steers a bit roughly, but on the testing track, it runs pretty smoothly.
+1. Fine tune steering angle adjustments for each step of image augmentation in order to make the car steer smoothly on tracks. These steering angle adjustments are empirically derived from triangular geometry, and tweaked by trial and error through the whole training process. These adjustments include:
+  - Adjustment for images from the left and right cameras;
+  - Adjustment for randomly sheared images;
+  - Adjustment for randomly rotated images.
+
+2. The model was trained in the cloud on a Microsoft Azure Virtual Machine powered with 2x NVIDIA Tesla K80 GPUs. Each epoch took only 100s for training and validation. Because such computational capability is available, and regularization such as Dropout was implemented to reduce overfitting, I can brutally use a relatively large number of epochs without worrying about overfitting.
+
+3. A callback of Early Stopping is implemented to stop training when validation loss has stopped improving. It can save processing time and will promise optimal model for the following analysis. Eventually the training stopped after 16 epochs.
+
+# Results
+
+The result performs surprisingly good, and the car can run on both training and testing tracks. On the training track, the car steers a little bit roughly, but on the testing track, it runs pretty smoothly.
 
 ![Train track](documents/train_track.gif)
 
