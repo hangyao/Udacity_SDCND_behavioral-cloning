@@ -177,8 +177,11 @@ The training process involves the following steps:
 
 1. Fine tune steering angle adjustments for each step of image augmentation in order to make the car steer smoothly on tracks. These steering angle adjustments are empirically derived from triangular geometry, and tweaked by trial and error through the whole training process. These adjustments include:
   - Adjustment for images from the left and right cameras;
+    We can assume that the width of car is 1.8m, camera sight distance is 20m, and `tan(\alpha) ~ \alpha` when `\alpha \to 0`, then the steering angle adjustment is `1.8 / 2 / 20 = 0.045`.
   - Adjustment for randomly sheared images;
+    We can assume that the height of camera is 1.3m, the steering ratio is 15, then the steering angle adjustment is `S / (H / 2) / 2 * 1.3 * 15 / 20`, where `S` is sheared pixels, and `H` is the image height in pixels.
   - Adjustment for randomly rotated images.
+    Based on previous assumptions, the steering angle adjustment is `\theta * \pi / 180 / 2 * 1.3 * 15 / 20`, where `\theta` is the rotation angle in degree.
 
 2. The model was trained in the cloud on a Microsoft Azure Virtual Machine powered with 2x NVIDIA Tesla K80 GPUs. Each epoch took only 100s for training and validation. Because such computational capability is available, and regularization such as Dropout was implemented to reduce overfitting, I can brutally use a relatively large number of epochs without worrying about overfitting.
 
