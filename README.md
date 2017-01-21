@@ -188,7 +188,7 @@ The training process involves the following steps:
 
     Based on previous assumptions, the steering angle adjustment is `θ * π / 180 / 2 * 1.3 * 15 / 20`, where `θ` is the rotation angle in degree.
 
-2. The model was trained in the cloud on a Microsoft Azure Virtual Machine powered with 2x NVIDIA Tesla K80 GPUs. Each epoch took only 100s for training and validation. Because such computational capability is available, and regularization such as Dropout was implemented to reduce overfitting, I can brutally use a relatively large number of epochs without worrying about overfitting.
+2. The model was trained in the cloud on a Microsoft Azure Virtual Machine powered with 2x NVIDIA Tesla K80 GPUs. Each epoch took only 100s for training and validation. It is less than 1/3 of time for training an epoch on a MacPro's CPU. Because such computational capability is available, and regularization such as Dropout was implemented to reduce overfitting, I can brutally use a relatively large number of epochs without worrying about overfitting.
 
 3. A callback of Early Stopping is implemented to stop training when validation loss has stopped improving. It can save processing time and will promise optimal model for the following analysis. Eventually the training stopped after 16 epochs.
 

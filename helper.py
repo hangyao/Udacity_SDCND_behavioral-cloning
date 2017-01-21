@@ -8,7 +8,7 @@ import json
 CSV_FILE = 'driving_log.csv'
 TOP_CROP = 56
 BOT_CROP = 16
-STEERING_ADJ = 0.15
+STEERING_ADJ = 0.045
 IMSIZE = 80
 
 
@@ -107,7 +107,7 @@ def random_shear(image, steer, shear_dist=50):
     d = np.random.randint(-shear_dist, shear_dist+1)
     pt_1 = np.float32([[0, rows], [cols, rows], [cols/2, rows/2]])
     pt_2 = np.float32([[0, rows], [cols, rows], [cols/2+d, rows/2]])
-    dsteer = np.arctan(d / (rows/2)) * np.pi / 180 * 15
+    dsteer = d / (rows/2) * .4875
     M = cv2.getAffineTransform(pt_1, pt_2)
     image = cv2.warpAffine(image, M, (cols,rows), borderMode=1)
     steer += dsteer
@@ -122,7 +122,7 @@ def random_rotate(image, steer, angle_range=5):
     rows, cols, _ = image.shape
     M = cv2.getRotationMatrix2D((cols/2,rows/2),angle,1)
     image = cv2.warpAffine(image, M, (cols,rows), borderMode=1)
-    dsteer = - (np.pi / 180) * angle
+    dsteer = - angle * np.pi / 180 * .4875
     steer += dsteer
     return image, steer
 
